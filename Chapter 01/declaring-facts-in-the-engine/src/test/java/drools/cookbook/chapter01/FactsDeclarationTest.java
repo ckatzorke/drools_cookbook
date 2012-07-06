@@ -35,6 +35,26 @@ public class FactsDeclarationTest {
 
         assertNotNull(serverType);
 
+        Object windowsServer = null;
+        try {
+            windowsServer = serverType.newInstance();
+        } catch (InstantiationException e) {
+            System.err.println("the class Server on drools.cookbook.chapter01 package hasn't a constructor");
+        } catch (IllegalAccessException e) {
+            System.err.println("unable to access the class Server on drools.cookbook.chapter01 package");
+        }
+        serverType.set(windowsServer, "name", "server001");
+        serverType.set(windowsServer, "processors", 1);
+        serverType.set(windowsServer, "memory", 2048); // 2 gigabytes
+        serverType.set(windowsServer, "diskSpace", 2048); // 2 terabytes
+        serverType.set(windowsServer, "cpuUsage", 3);
+
+        ksession.insert(windowsServer);
+
+        ksession.fireAllRules();
+
+        assertEquals(ksession.getObjects().size(), 0);
+        
         Object debianServer = null;
         try {
             debianServer = serverType.newInstance();
@@ -44,7 +64,7 @@ public class FactsDeclarationTest {
             System.err.println("unable to access the class Server on drools.cookbook.chapter01 package");
         }
         serverType.set(debianServer, "name", "server001");
-        serverType.set(debianServer, "processors", 1);
+        serverType.set(debianServer, "processors", 2);
         serverType.set(debianServer, "memory", 2048); // 2 gigabytes
         serverType.set(debianServer, "diskSpace", 2048); // 2 terabytes
         serverType.set(debianServer, "cpuUsage", 3);
@@ -53,7 +73,10 @@ public class FactsDeclarationTest {
 
         ksession.fireAllRules();
 
-        assertEquals(ksession.getObjects().size(), 0);
+        assertEquals(ksession.getObjects().size(), 1);
+        
+        
+        
 
     }
 
